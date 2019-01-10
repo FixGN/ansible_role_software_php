@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Aleksey Y Cherniaev <FunnyJS@inbox.ru>
+  description: PHP and PHP-FPM installation on server
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.7
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+  galaxy_tags:
+    - software
+    - web
+    - php
+    - php-fpm

@@ -1,0 +1,36 @@
+---
+- name: Install remi and epel relases
+  yum: name=remi-release,epel-release state=latest
+
+- name: Install PHP
+  yum: 
+    name: ["php", "php-fpm"]
+    state: installed 
+    enablerepo: "remi-php{{ php_version }}"
+  notify: restart php-fpm
+
+- name: Install additional libs (if needed)
+  yum:
+    name: "{{ php_additional_libs_installed }}"
+    state: installed
+    enablerepo: "remi-php{{ php_version }}"
+  when: php_additional_libs_installed is defined
+  notify: restart php-fpm
+  
+- name: Delete additional libs (if needed)
+  yum:
+    name: "{{ php_additional_libs_absent }}"
+    state: absent
+    enablerepo: "remi-php{{ php_version }}"
+  when: php_additional_libs_absent is defined
+  notify: restart php-fpm
+
+- name: Configure php and php-fpm
+  template: src={{ item.src }} dest={{ item.dest }}
+  loop:
+    - { src: 'etc/php.ini', dest: '/etc/php.ini' }
+    - { src: 'etc/php-fpm.d/www.conf', dest: '/etc/php-fpm.d/www.conf' }
+  notify: restart php-fpm
+
+- name: Ensure php-fpm is started and enabled to start at boot.
+  service: name=php-fpm state=started enabled=yes
